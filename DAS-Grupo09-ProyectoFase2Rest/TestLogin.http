@@ -1,0 +1,119 @@
+### Ejemplos de Peticiones HTTP para el Sistema de Envío de Paquetes
+
+### Variables
+@baseUrl = https://localhost:7000
+@token = 
+
+### ========================================
+### LOGIN - Autenticación de Usuarios
+### ========================================
+
+### Login Exitoso - Administrador
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "admin",
+  "clave": "admin123"
+}
+
+### Login - Personal de Bodega
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "bodega",
+  "clave": "bodega123"
+}
+
+### Login - Repartidor
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "repartidor",
+  "clave": "repartidor123"
+}
+
+### Login - Cliente
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "cliente",
+  "clave": "cliente123"
+}
+
+### ========================================
+### CASOS DE ERROR - Login
+### ========================================
+
+### Login Fallido - Usuario no existe
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "noexiste",
+  "clave": "123456"
+}
+
+### Login Fallido - Contraseña incorrecta
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "admin",
+  "clave": "contraseñaincorrecta"
+}
+
+### Login Fallido - Campos vacíos
+POST {{baseUrl}}/api/seguridad/login
+Content-Type: application/json
+
+{
+  "usuario": "",
+  "clave": ""
+}
+
+### ========================================
+### ENDPOINTS PROTEGIDOS (Ejemplos)
+### Reemplaza el token después de hacer login
+### ========================================
+### NOTAS DE USO
+### ========================================
+
+# 1. Primero realiza el login con uno de los ejemplos anteriores
+# 2. Copia el token JWT que recibes en la respuesta
+# 3. Reemplaza {{token}} con el token copiado en la variable de arriba
+# 4. Usa ese token en los headers Authorization para endpoints protegidos
+
+### Formato del token en el header:
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ========================================
+### RESPUESTAS ESPERADAS
+### ========================================
+
+# Login Exitoso (Code 0):
+# {
+#   "code": 0,
+#   "msj": "Autenticación exitosa",
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "usuario": {
+#     "id": 1,
+#     "username": "admin",
+#     "nombre": "Admin",
+#     "apellido": "Principal",
+#     "correo": "admin@sistema.com",
+#     "rol": "Administrador",
+#     "idRol": 1
+#   }
+# }
+
+# Login Fallido (Code -1):
+# {
+#   "code": -1,
+#   "msj": "Usuario o clave incorrectos",
+#   "token": null,
+#   "usuario": null
+# }

@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="text-center" style="padding: 50px 0;">
+    <h1 class="text-danger">
+        <i class="fas fa-exclamation-triangle"></i> Error
+    </h1>
+    <h2 class="text-danger">Ha ocurrido un error al procesar su solicitud.</h2>
+    
+    <p class="mt-4">
+        Por favor, intente nuevamente o contacte al administrador del sistema.
+    </p>
+    
+    <a asp-controller="Login" asp-action="Index" class="btn btn-primary mt-3">
+        <i class="fas fa-home"></i> Ir al Login
+    </a>
+</div>

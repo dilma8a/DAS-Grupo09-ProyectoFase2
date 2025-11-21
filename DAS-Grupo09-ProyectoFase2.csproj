@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DAS_Grupo09_ProyectoFase2</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Excluir los proyectos REST de la compilación del proyecto MVC -->
+    <Compile Remove="DAS-Grupo09-ProyectoFase2Rest\**" />
+    <Compile Remove="ServiciosRest\**" />
+    <Content Remove="DAS-Grupo09-ProyectoFase2Rest\**" />
+    <Content Remove="ServiciosRest\**" />
+    <EmbeddedResource Remove="DAS-Grupo09-ProyectoFase2Rest\**" />
+    <EmbeddedResource Remove="ServiciosRest\**" />
+    <None Remove="DAS-Grupo09-ProyectoFase2Rest\**" />
+    <None Remove="ServiciosRest\**" />
+  </ItemGroup>
+
+</Project>

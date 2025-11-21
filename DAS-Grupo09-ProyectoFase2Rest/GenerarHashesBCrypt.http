@@ -1,0 +1,27 @@
+### Generar Hashes BCrypt Reales
+
+@baseUrl = https://localhost:7000
+
+### Generar hash para admin123
+POST {{baseUrl}}/api/seguridad/generar-hash
+Content-Type: application/json
+
+"admin123"
+
+### Generar hash para bodega123
+POST {{baseUrl}}/api/seguridad/generar-hash
+Content-Type: application/json
+
+"bodega123"
+
+### Generar hash para repartidor123
+POST {{baseUrl}}/api/seguridad/generar-hash
+Content-Type: application/json
+
+"repartidor123"
+
+### Generar hash para cliente123
+POST {{baseUrl}}/api/seguridad/generar-hash
+Content-Type: application/json
+
+"cliente123"

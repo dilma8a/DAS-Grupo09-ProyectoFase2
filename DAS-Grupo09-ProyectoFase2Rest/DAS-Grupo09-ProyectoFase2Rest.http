@@ -1,0 +1,5 @@
+@DAS_Grupo09_ProyectoFase2Rest_HostAddress = http://localhost:5069
+
+# Para probar los endpoints de seguridad, usar TestLogin.http
+
+###
