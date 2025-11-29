@@ -1,0 +1,31 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Envio
+
+@{
+    ViewData["Title"] = "Eliminar Envío";
+}
+
+<div class="container mt-4">
+    <h2>Eliminar Envío</h2>
+    <h3 class="text-danger">¿Está seguro que desea eliminar este envío?</h3>
+    <hr />
+    
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+        
+        <dt class="col-sm-3">Origen</dt>
+        <dd class="col-sm-9">@Model.Origen</dd>
+        
+        <dt class="col-sm-3">Destino</dt>
+        <dd class="col-sm-9">@Model.Destino</dd>
+        
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">@Model.EstadoEnvio</dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

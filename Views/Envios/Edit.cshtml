@@ -1,0 +1,67 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Envio
+
+@{
+    ViewData["Title"] = "Editar Envío";
+}
+
+<div class="container mt-4">
+    <h2>Editar Envío</h2>
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="form-group mb-3">
+                    <label asp-for="IdPaquete" class="control-label"></label>
+                    <select asp-for="IdPaquete" class="form-control" asp-items="ViewBag.Paquetes"></select>
+                    <span asp-validation-for="IdPaquete" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="Origen" class="control-label"></label>
+                    <input asp-for="Origen" class="form-control" />
+                    <span asp-validation-for="Origen" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="Destino" class="control-label"></label>
+                    <input asp-for="Destino" class="form-control" />
+                    <span asp-validation-for="Destino" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="EstadoEnvio" class="control-label"></label>
+                    <select asp-for="EstadoEnvio" class="form-control" asp-items="ViewBag.Estados"></select>
+                    <span asp-validation-for="EstadoEnvio" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="FechaSalida" class="control-label"></label>
+                    <input asp-for="FechaSalida" class="form-control" type="datetime-local" />
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="FechaEntrega" class="control-label"></label>
+                    <input asp-for="FechaEntrega" class="form-control" type="datetime-local" />
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="Observaciones" class="control-label"></label>
+                    <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

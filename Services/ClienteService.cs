@@ -8,17 +8,31 @@ namespace DAS_Grupo09_ProyectoFase2.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ClienteService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClienteService(HttpClient httpClient, ILogger<ClienteService> logger)
+        public ClienteService(HttpClient httpClient, ILogger<ClienteService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private void AddAuthorizationHeader()
+        {
+            var token = _httpContextAccessor.HttpContext?.Session.GetString("Token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            }
         }
 
         public async Task<List<Cliente>> GetClientesAsync()
         {
             try
             {
+                AddAuthorizationHeader();
+
                 var response = await _httpClient.GetAsync("api/Clientes");
                 response.EnsureSuccessStatusCode();
 
@@ -41,6 +55,8 @@ namespace DAS_Grupo09_ProyectoFase2.Services
         {
             try
             {
+                AddAuthorizationHeader();
+
                 var response = await _httpClient.GetAsync($"api/Clientes/{id}");
 
                 if (!response.IsSuccessStatusCode)
@@ -67,6 +83,8 @@ namespace DAS_Grupo09_ProyectoFase2.Services
         {
             try
             {
+                AddAuthorizationHeader();
+
                 var jsonContent = JsonSerializer.Serialize(cliente);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
@@ -92,6 +110,8 @@ namespace DAS_Grupo09_ProyectoFase2.Services
         {
             try
             {
+                AddAuthorizationHeader();
+
                 var jsonContent = JsonSerializer.Serialize(cliente);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
@@ -109,6 +129,8 @@ namespace DAS_Grupo09_ProyectoFase2.Services
         {
             try
             {
+                AddAuthorizationHeader();
+
                 var response = await _httpClient.DeleteAsync($"api/Clientes/{id}");
                 return response.IsSuccessStatusCode;
             }

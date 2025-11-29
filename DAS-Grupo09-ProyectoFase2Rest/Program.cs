@@ -7,44 +7,50 @@ using DAS_Grupo09_ProyectoFase2Rest.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-// Configurar DbContext con SQL Server
+// ========== DB CONTEXT (SQL SERVER) ==========
 builder.Services.AddDbContext<EnvioPaqueteContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey no configurada");
+// ========== JWT ==========
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSection.GetValue<string>("SecretKey");
 
-builder.Services.AddAuthentication(options =>
+// Fallback para evitar tirar excepción dura en desarrollo
+if (string.IsNullOrEmpty(secretKey))
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    // IMPORTANTE: esto debería coincidir con el appsettings
+    secretKey = "SuClaveSecretaSuperSeguraParaJWT2024MinimoDe32Caracteres";
+}
+
+builder.Services
+    .AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        ClockSkew = TimeSpan.Zero
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// ========== SWAGGER ==========
 builder.Services.AddEndpointsApiExplorer();
-
-// Configurar Swagger para usar JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -54,14 +60,15 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para el sistema de gestión de envíos de paquetes"
     });
 
-    // Configurar autenticación JWT en Swagger
+    // Definición de seguridad para JWT
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Autenticación JWT usando el esquema Bearer. Ingrese 'Bearer' [espacio] y luego su token en el campo de texto.\r\n\r\nEjemplo: \"Bearer 12345abcdef\"",
+        Description = "Autenticación JWT con esquema Bearer. Ejemplo: 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -73,21 +80,18 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
+                }
             },
             new List<string>()
         }
     });
 });
 
-// Configurar CORS (opcional, útil para desarrollo)
+// ========== CORS (DESARROLLO) ==========
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder => builder
+        policy => policy
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
@@ -95,7 +99,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ========== PIPELINE ==========
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -104,10 +108,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Habilitar CORS
 app.UseCors("AllowAll");
 
-// Habilitar autenticación y autorización
 app.UseAuthentication();
 app.UseAuthorization();
 

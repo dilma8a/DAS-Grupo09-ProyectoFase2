@@ -1,0 +1,35 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Paquete
+
+@{
+    ViewData["Title"] = "Detalles del Paquete";
+}
+
+<div class="container mt-4">
+    <h2>Detalles del Paquete</h2>
+    <hr />
+    
+    <dl class="row">
+        <dt class="col-sm-3">Código de Barra</dt>
+        <dd class="col-sm-9">@Model.CodigoBarra</dd>
+        
+        <dt class="col-sm-3">Peso</dt>
+        <dd class="col-sm-9">@Model.Peso kg</dd>
+        
+        <dt class="col-sm-3">Dimensiones</dt>
+        <dd class="col-sm-9">@Model.Dimensiones</dd>
+        
+        <dt class="col-sm-3">Descripción</dt>
+        <dd class="col-sm-9">@Model.Descripcion</dd>
+        
+        <dt class="col-sm-3">Estado Actual</dt>
+        <dd class="col-sm-9"><span class="badge bg-info">@Model.EstadoActual</span></dd>
+        
+        <dt class="col-sm-3">Fecha de Registro</dt>
+        <dd class="col-sm-9">@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</dd>
+    </dl>
+    
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>

@@ -1,0 +1,197 @@
+﻿@model DAS_Grupo09_ProyectoFase2.Models.EstadisticasGenerales
+
+@{
+    ViewData["Title"] = "Dashboard - Reportes";
+}
+
+<div class="container mt-4">
+    <h2><i class="fas fa-chart-line"></i> Dashboard de Reportes y Estadísticas</h2>
+    <p class="text-muted">Resumen general del sistema de envíos</p>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-times-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Envíos</h6>
+                            <h2 class="mb-0">@Model.TotalEnvios</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-shipping-fast fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Clientes</h6>
+                            <h2 class="mb-0">@Model.TotalClientes</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-info shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Paquetes</h6>
+                            <h2 class="mb-0">@Model.TotalPaquetes</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-box fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Reclamos</h6>
+                            <h2 class="mb-0">@Model.TotalReclamos</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-truck"></i> Estado de Envíos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>En Tránsito</span>
+                            <strong>@Model.EnviosEnTransito</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-info" role="progressbar"
+                                 style="width: @((Model.TotalEnvios > 0 ? (Model.EnviosEnTransito * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%">
+                                @((Model.TotalEnvios > 0 ? (Model.EnviosEnTransito * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Entregados</span>
+                            <strong>@Model.EnviosEntregados</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="width: @((Model.TotalEnvios > 0 ? (Model.EnviosEntregados * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%">
+                                @((Model.TotalEnvios > 0 ? (Model.EnviosEntregados * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Pendientes</span>
+                            <strong>@Model.EnviosPendientes</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-warning" role="progressbar"
+                                 style="width: @((Model.TotalEnvios > 0 ? (Model.EnviosPendientes * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%">
+                                @((Model.TotalEnvios > 0 ? (Model.EnviosPendientes * 100.0 / Model.TotalEnvios) : 0).ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-circle"></i> Estado de Reclamos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Pendientes</span>
+                            <strong>@Model.ReclamosPendientes</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-warning" role="progressbar"
+                                 style="width: @((Model.TotalReclamos > 0 ? (Model.ReclamosPendientes * 100.0 / Model.TotalReclamos) : 0).ToString("F1"))%">
+                                @((Model.TotalReclamos > 0 ? (Model.ReclamosPendientes * 100.0 / Model.TotalReclamos) : 0).ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Resueltos</span>
+                            <strong>@Model.ReclamosResueltos</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="width: @((Model.TotalReclamos > 0 ? (Model.ReclamosResueltos * 100.0 / Model.TotalReclamos) : 0).ToString("F1"))%">
+                                @((Model.TotalReclamos > 0 ? (Model.ReclamosResueltos * 100.0 / Model.TotalReclamos) : 0).ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-4x text-primary mb-3"></i>
+                    <h5>Reporte de Envíos</h5>
+                    <p class="text-muted">Consulta detallada de envíos con filtros personalizados</p>
+                    <a asp-action="Envios" class="btn btn-primary">
+                        <i class="fas fa-chart-bar"></i> Ver Reporte
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-4x text-warning mb-3"></i>
+                    <h5>Reporte de Reclamos</h5>
+                    <p class="text-muted">Análisis de reclamos y tiempos de resolución</p>
+                    <a asp-action="Reclamos" class="btn btn-warning">
+                        <i class="fas fa-chart-bar"></i> Ver Reporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

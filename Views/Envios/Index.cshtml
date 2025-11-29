@@ -1,0 +1,60 @@
+@model IEnumerable<DAS_Grupo09_ProyectoFase2.Models.Envio>
+
+@{
+    ViewData["Title"] = "Envíos";
+}
+
+<div class="container mt-4">
+    <h2>Gestión de Envíos</h2>
+    
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Crear Nuevo Envío</a>
+    </p>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Estado</th>
+                <th>Fecha Salida</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Origen</td>
+                    <td>@item.Destino</td>
+                    <td>
+                        @if (item.EstadoEnvio == "Entregado")
+                        {
+                            <span class="badge bg-success">@item.EstadoEnvio</span>
+                        }
+                        else if (item.EstadoEnvio == "En tránsito")
+                        {
+                            <span class="badge bg-primary">@item.EstadoEnvio</span>
+                        }
+                        else if (item.EstadoEnvio == "Retrasado")
+                        {
+                            <span class="badge bg-danger">@item.EstadoEnvio</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">@item.EstadoEnvio</span>
+                        }
+                    </td>
+                    <td>@(item.FechaSalida?.ToString("dd/MM/yyyy") ?? "Sin asignar")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Ver</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

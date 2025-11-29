@@ -1,0 +1,38 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Envio
+
+@{
+    ViewData["Title"] = "Detalles del Envío";
+}
+
+<div class="container mt-4">
+    <h2>Detalles del Envío</h2>
+    <hr />
+    
+    <dl class="row">
+        <dt class="col-sm-3">ID Envío</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+        
+        <dt class="col-sm-3">Origen</dt>
+        <dd class="col-sm-9">@Model.Origen</dd>
+        
+        <dt class="col-sm-3">Destino</dt>
+        <dd class="col-sm-9">@Model.Destino</dd>
+        
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9"><span class="badge bg-info">@Model.EstadoEnvio</span></dd>
+        
+        <dt class="col-sm-3">Fecha de Salida</dt>
+        <dd class="col-sm-9">@(Model.FechaSalida?.ToString("dd/MM/yyyy HH:mm") ?? "Sin asignar")</dd>
+        
+        <dt class="col-sm-3">Fecha de Entrega</dt>
+        <dd class="col-sm-9">@(Model.FechaEntrega?.ToString("dd/MM/yyyy HH:mm") ?? "Sin entregar")</dd>
+        
+        <dt class="col-sm-3">Observaciones</dt>
+        <dd class="col-sm-9">@Model.Observaciones</dd>
+    </dl>
+    
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Reclamo
+
+@{
+    ViewData["Title"] = "Editar Reclamo";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning">
+                    <h4><i class="fas fa-edit"></i> Editar Reclamo #@Model.Id</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="FechaReclamo" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdCliente" class="form-label"></label>
+                            <select asp-for="IdCliente" class="form-select" asp-items="ViewBag.Clientes" disabled>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdEnvio" class="form-label"></label>
+                            <select asp-for="IdEnvio" class="form-select" asp-items="ViewBag.Envios" disabled>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TipoReclamo" class="form-label"></label>
+                            <select asp-for="TipoReclamo" class="form-select" asp-items="ViewBag.TiposReclamo">
+                            </select>
+                            <span asp-validation-for="TipoReclamo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label"></label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Estado" class="form-label"></label>
+                            <select asp-for="Estado" class="form-select" asp-items="ViewBag.Estados">
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Respuesta" class="form-label"></label>
+                            <textarea asp-for="Respuesta" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Actualizar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

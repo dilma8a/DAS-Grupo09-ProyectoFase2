@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Rastreo de Paquetes";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center">Rastreo de Paquetes</h3>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    
+                    <form asp-action="Buscar" method="post">
+                        <div class="form-group mb-3">
+                            <label for="codigoBarra" class="form-label">Código de Seguimiento</label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="codigoBarra" 
+                                   name="codigoBarra" 
+                                   placeholder="Ingrese su código de rastreo" 
+                                   required />
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Rastrear Paquete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

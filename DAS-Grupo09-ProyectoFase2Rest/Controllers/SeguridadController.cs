@@ -19,7 +19,7 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
         private readonly ILogger<SeguridadController> _logger;
 
         public SeguridadController(
-            EnvioPaqueteContext context, 
+            EnvioPaqueteContext context,
             IConfiguration configuration,
             ILogger<SeguridadController> logger)
         {
@@ -29,17 +29,19 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
         }
 
         /// <summary>
-        /// Endpoint para autenticación de usuarios
+        /// Endpoint para autenticación de usuarios.
         /// </summary>
-        /// <param name="request">Credenciales del usuario (correo y contraseña)</param>
-        /// <returns>Token JWT si las credenciales son válidas</returns>
+        /// <param name="request">Credenciales del usuario (usuario y clave).</param>
+        /// <returns>Token JWT si las credenciales son válidas.</returns>
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
         {
             try
             {
-                // Validar que el request no sea nulo
-                if (request == null || string.IsNullOrEmpty(request.Usuario) || string.IsNullOrEmpty(request.Clave))
+                // Validar que el request no sea nulo ni venga vacío
+                if (request == null ||
+                    string.IsNullOrWhiteSpace(request.Usuario) ||
+                    string.IsNullOrWhiteSpace(request.Clave))
                 {
                     return Ok(new LoginResponse
                     {
@@ -56,7 +58,7 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
                 // Validar si el usuario existe
                 if (usuario == null)
                 {
-                    _logger.LogWarning($"Intento de login fallido: Usuario {request.Usuario} no encontrado");
+                    _logger.LogWarning("Intento de login fallido: Usuario {Usuario} no encontrado", request.Usuario);
                     return Ok(new LoginResponse
                     {
                         Code = -1,
@@ -67,7 +69,7 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
                 // Validar si el usuario está activo
                 if (!usuario.EstaActivo)
                 {
-                    _logger.LogWarning($"Intento de login con usuario inactivo: {request.Usuario}");
+                    _logger.LogWarning("Intento de login con usuario inactivo: {Usuario}", request.Usuario);
                     return Ok(new LoginResponse
                     {
                         Code = -1,
@@ -75,12 +77,40 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
                     });
                 }
 
-                // Verificar la contraseña con BCrypt
-                bool passwordValida = BCrypt.Net.BCrypt.Verify(request.Clave, usuario.Clave);
+                // =============================
+                // VALIDAR CONTRASEÑA (HASH O PLANO)
+                // =============================
+                bool passwordValida = false;
+
+                try
+                {
+                    // Si la clave en BD parece un hash BCrypt (comienza con $2)
+                    if (!string.IsNullOrEmpty(usuario.Clave) &&
+                        usuario.Clave.StartsWith("$2"))
+                    {
+                        // Validar con BCrypt
+                        passwordValida = BCrypt.Net.BCrypt.Verify(request.Clave, usuario.Clave);
+                    }
+                    else
+                    {
+                        // Clave en texto plano (como tu usuario admin actual)
+                        passwordValida = usuario.Clave == request.Clave;
+                    }
+                }
+                catch (Exception exBcrypt)
+                {
+                    // Si BCrypt falla (por ejemplo "Invalid salt version"),
+                    // hacemos un fallback a comparación directa.
+                    _logger.LogWarning(exBcrypt,
+                        "Error verificando contraseña con BCrypt para usuario {Usuario}. Se intentará comparación simple.",
+                        request.Usuario);
+
+                    passwordValida = usuario.Clave == request.Clave;
+                }
 
                 if (!passwordValida)
                 {
-                    _logger.LogWarning($"Intento de login fallido: Contraseña incorrecta para usuario {request.Usuario}");
+                    _logger.LogWarning("Intento de login fallido: Contraseña incorrecta para usuario {Usuario}", request.Usuario);
                     return Ok(new LoginResponse
                     {
                         Code = -1,
@@ -91,7 +121,7 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
                 // Generar el token JWT
                 var token = GenerarTokenJWT(usuario);
 
-                _logger.LogInformation($"Login exitoso para usuario: {usuario.Username}");
+                _logger.LogInformation("Login exitoso para usuario: {Usuario}", usuario.Username);
 
                 // Retornar respuesta exitosa
                 return Ok(new LoginResponse
@@ -123,7 +153,7 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
         }
 
         /// <summary>
-        /// Endpoint temporal para generar hashes BCrypt
+        /// Endpoint temporal para generar hashes BCrypt (solo si quieres probar hashing).
         /// </summary>
         [HttpPost("generar-hash")]
         public ActionResult<object> GenerarHash([FromBody] string password)
@@ -131,7 +161,14 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
             try
             {
                 string hash = BCrypt.Net.BCrypt.HashPassword(password);
-                return Ok(new { password = password, hash = hash, valido = BCrypt.Net.BCrypt.Verify(password, hash) });
+                bool valido = BCrypt.Net.BCrypt.Verify(password, hash);
+
+                return Ok(new
+                {
+                    password,
+                    hash,
+                    valido
+                });
             }
             catch (Exception ex)
             {
@@ -140,12 +177,13 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Controllers
         }
 
         /// <summary>
-        /// Genera un token JWT para el usuario autenticado
+        /// Genera un token JWT para el usuario autenticado.
         /// </summary>
         private string GenerarTokenJWT(Models.Usuario usuario)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey no configurada");
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

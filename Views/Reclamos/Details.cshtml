@@ -1,0 +1,76 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Reclamo
+
+@{
+    ViewData["Title"] = "Detalles del Reclamo";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4><i class="fas fa-info-circle"></i> Detalles del Reclamo #@Model.Id</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Cliente:</dt>
+                        <dd class="col-sm-8">@(Model.Cliente?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Envío:</dt>
+                        <dd class="col-sm-8">@Model.IdEnvio</dd>
+
+                        <dt class="col-sm-4">Tipo de Reclamo:</dt>
+                        <dd class="col-sm-8">@Model.TipoReclamo</dd>
+
+                        <dt class="col-sm-4">Descripción:</dt>
+                        <dd class="col-sm-8">@Model.Descripcion</dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Estado == "Pendiente")
+                            {
+                                <span class="badge bg-warning">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "En revisión")
+                            {
+                                <span class="badge bg-info">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "Resuelto")
+                            {
+                                <span class="badge bg-success">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "Rechazado")
+                            {
+                                <span class="badge bg-danger">@Model.Estado</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Reclamo:</dt>
+                        <dd class="col-sm-8">@Model.FechaReclamo.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        @if (Model.FechaResolucion != null)
+                        {
+                            <dt class="col-sm-4">Fecha de Resolución:</dt>
+                            <dd class="col-sm-8">@Model.FechaResolucion?.ToString("dd/MM/yyyy HH:mm")</dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Respuesta))
+                        {
+                            <dt class="col-sm-4">Respuesta:</dt>
+                            <dd class="col-sm-8">@Model.Respuesta</dd>
+                        }
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

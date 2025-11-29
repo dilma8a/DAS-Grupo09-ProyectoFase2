@@ -1,43 +1,254 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - EnvíoExpress SV</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DAS_Grupo09_ProyectoFase2.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #1976d2;
+            --accent-color: #42a5f5;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+            .navbar-brand i {
+                color: #ffd700;
+                margin-right: 10px;
+            }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            margin: 0 10px;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+            .navbar-nav .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white !important;
+            }
+
+            .navbar-nav .nav-link i {
+                margin-right: 5px;
+            }
+
+        .user-info {
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+            .user-info i {
+                margin-right: 8px;
+                color: #ffd700;
+            }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #c62828, #ef5350);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: linear-gradient(135deg, #b71c1c, #c62828);
+                transform: translateY(-2px);
+            }
+
+        .menu-navigation {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+            .menu-navigation .nav {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .menu-navigation .nav-item {
+                flex: 1;
+                min-width: 150px;
+                max-width: 200px;
+            }
+
+            .menu-navigation .nav-link {
+                color: #666;
+                padding: 18px 20px;
+                text-align: center;
+                transition: all 0.3s;
+                border-bottom: 3px solid transparent;
+                font-weight: 500;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+
+                .menu-navigation .nav-link i {
+                    font-size: 24px;
+                    margin-bottom: 5px;
+                }
+
+                .menu-navigation .nav-link:hover {
+                    background-color: #f5f7fa;
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                }
+
+                .menu-navigation .nav-link.active {
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                    background-color: #f5f7fa;
+                }
+
+        .main-content {
+            min-height: calc(100vh - 300px);
+        }
+
+        .footer {
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Dashboard" asp-action="Index">EnvíoExpress SV</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+    @{
+        var httpContext = HttpContextAccessor.HttpContext;
+        var token = httpContext?.Session.GetString("Token");
+        var usuario = httpContext?.Session.GetString("Usuario");
+        var nombreCompleto = httpContext?.Session.GetString("NombreCompleto");
+        var rol = httpContext?.Session.GetString("Rol");
+        bool autenticado = !string.IsNullOrEmpty(token);
+    }
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="@Url.Action("Index", "Dashboard")">
+                <i class="fas fa-truck-fast"></i>
+                EnvíoExpress SV
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Dashboard")">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    @if (Context.Session.GetString("NombreCompleto") != null)
+                    {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            <div class="user-info">
+                                <i class="fas fa-user-circle"></i>
+                                <span>@Context.Session.GetString("NombreCompleto") (@Context.Session.GetString("Rol"))</span>
+                            </div>
                         </li>
-                    </ul>
-                </div>
+                        <li class="nav-item">
+                            <form asp-controller="Login" asp-action="Logout" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </div>
+    </nav>
+
+    <!-- Menu Navigation -->
+    <div class="menu-navigation">
+        <div class="container-fluid">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Clientes" ? "active" : "")"
+                       asp-controller="Clientes" asp-action="Index">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Paquetes" asp-action="Index">
+                        <i class="fas fa-box"></i>
+                        <span>Paquetes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Envios" asp-action="Index">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Envíos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Reclamos" asp-action="Index">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Reclamos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Reportes" asp-action="Index">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - EnvíoExpress SV - Sistema de Gestión de Envíos y Logística
+    <!-- Main Content -->
+    <div class="main-content">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="text-muted mb-0">
+                &copy; 2025 - EnvíoExpress SV - Sistema de Gestión de Envíos y Logística
+            </p>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

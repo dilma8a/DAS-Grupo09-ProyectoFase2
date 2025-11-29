@@ -1,0 +1,31 @@
+@model DAS_Grupo09_ProyectoFase2.Models.Paquete
+
+@{
+    ViewData["Title"] = "Eliminar Paquete";
+}
+
+<div class="container mt-4">
+    <h2>Eliminar Paquete</h2>
+    <h3 class="text-danger">¿Está seguro que desea eliminar este paquete?</h3>
+    <hr />
+    
+    <dl class="row">
+        <dt class="col-sm-3">Código de Barra</dt>
+        <dd class="col-sm-9">@Model.CodigoBarra</dd>
+        
+        <dt class="col-sm-3">Peso</dt>
+        <dd class="col-sm-9">@Model.Peso kg</dd>
+        
+        <dt class="col-sm-3">Descripción</dt>
+        <dd class="col-sm-9">@Model.Descripcion</dd>
+        
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">@Model.EstadoActual</dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

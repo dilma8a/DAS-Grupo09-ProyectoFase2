@@ -1,0 +1,193 @@
+﻿@model IEnumerable<DAS_Grupo09_ProyectoFase2.Models.ReporteReclamo>
+
+@{
+    ViewData["Title"] = "Reporte de Reclamos";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-exclamation-triangle text-warning"></i> Reporte de Reclamos</h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-warning">
+            <h5 class="mb-0"><i class="fas fa-filter"></i> Filtros de Búsqueda</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Reclamos" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" name="fechaInicio" class="form-control"
+                               value="@ViewBag.FechaInicio?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" name="fechaFin" class="form-control"
+                               value="@ViewBag.FechaFin?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        <select name="estado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En revisión">En revisión</option>
+                            <option value="Resuelto">Resuelto</option>
+                            <option value="Rechazado">Rechazado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-3 text-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <a asp-action="Reclamos" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (ViewBag.Estadisticas != null)
+    {
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Distribución por Estado</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var est in ViewBag.Estadisticas)
+                    {
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <h6>@est.Estado</h6>
+                                <h3 class="text-warning">@est.Cantidad</h3>
+                                <p class="text-muted">@est.Porcentaje.ToString("F1")%</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-table"></i> Resultados
+                <span class="badge bg-light text-dark float-end">@Model.Count() registros</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Envío</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha Reclamo</th>
+                            <th>Fecha Resolución</th>
+                            <th>Días</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><strong>#@item.Id</strong></td>
+                                    <td>@item.ClienteNombre</td>
+                                    <td>Envío #@item.EnvioId</td>
+                                    <td><small>@item.TipoReclamo</small></td>
+                                    <td>
+                                        @if (item.Estado == "Resuelto")
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> @item.Estado
+                                            </span>
+                                        }
+                                        else if (item.Estado == "En revisión")
+                                        {
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-search"></i> @item.Estado
+                                            </span>
+                                        }
+                                        else if (item.Estado == "Pendiente")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-clock"></i> @item.Estado
+                                            </span>
+                                        }
+                                        else if (item.Estado == "Rechazado")
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times"></i> @item.Estado
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>@item.FechaReclamo.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (item.FechaResolucion != null)
+                                        {
+                                            @item.FechaResolucion?.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin resolver</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.DiasResolucion > 7)
+                                        {
+                                            <span class="badge bg-danger">@item.DiasResolucion días</span>
+                                        }
+                                        else if (item.DiasResolucion > 3)
+                                        {
+                                            <span class="badge bg-warning">@item.DiasResolucion días</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">@item.DiasResolucion días</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <p>No se encontraron resultados</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        var promedioResolucion = Model.Where(r => r.FechaResolucion != null).Any()
+        ? Model.Where(r => r.FechaResolucion != null).Average(r => r.DiasResolucion)
+        : 0;
+
+        <div class="alert alert-info mt-4">
+            <h5><i class="fas fa-info-circle"></i> Resumen</h5>
+            <p class="mb-0">
+                <strong>Promedio de resolución:</strong> @promedioResolucion.ToString("F1") días |
+                <strong>Total reclamos:</strong> @Model.Count()
+            </p>
+        </div>
+    }
+</div>

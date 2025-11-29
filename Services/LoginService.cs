@@ -1,42 +1,72 @@
 using DAS_Grupo09_ProyectoFase2.Models;
-using System.Text;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace DAS_Grupo09_ProyectoFase2.Services
 {
     public class LoginService : ILoginService
     {
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
+        private readonly HttpClient _http;
 
-        public LoginService(HttpClient httpClient, IConfiguration configuration)
+        public LoginService(HttpClient http)
         {
-            _httpClient = httpClient;
-            _configuration = configuration;
+            _http = http;
         }
 
         public async Task<LoginResponse> LoginAsync(string usuario, string clave)
         {
+            // Este objeto anónimo se serializa a JSON como:
+            // { "Usuario": "admin", "Clave": "1234" }
+            var request = new
+            {
+                Usuario = usuario,
+                Clave = clave
+            };
+
             try
             {
-                var loginRequest = new LoginRequest
+                // Llama a POST https://localhost:PUERTO/api/Seguridad/login
+                var response = await _http.PostAsJsonAsync("Seguridad/login", request);
+
+                var raw = await response.Content.ReadAsStringAsync();
+
+                // Si la API devolvió error HTTP (404, 500, etc.)
+                if (!response.IsSuccessStatusCode)
                 {
-                    usuario = usuario,
-                    clave = clave
-                };
+                    return new LoginResponse
+                    {
+                        code = -1,
+                        msj = $"Error HTTP {(int)response.StatusCode}: {response.ReasonPhrase}. Detalle: {raw}"
+                    };
+                }
 
-                var jsonContent = JsonSerializer.Serialize(loginRequest);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                if (string.IsNullOrWhiteSpace(raw))
+                {
+                    return new LoginResponse
+                    {
+                        code = -1,
+                        msj = "La API devolvió una respuesta vacía."
+                    };
+                }
 
-                var response = await _httpClient.PostAsync("api/Seguridad/login", content);
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseContent, new JsonSerializerOptions
+                var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                });
+                };
 
-                return loginResponse ?? new LoginResponse { code = -1, msj = "Error al procesar la respuesta" };
+                // Mapea directamente al modelo que ya usas en tu LoginController
+                var result = JsonSerializer.Deserialize<LoginResponse>(raw, options);
+
+                if (result == null)
+                {
+                    return new LoginResponse
+                    {
+                        code = -1,
+                        msj = "No se pudo interpretar la respuesta del servidor."
+                    };
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
