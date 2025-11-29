@@ -13,6 +13,13 @@ builder.Services.AddHttpClient<ILoginService, LoginService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// Configurar HttpClient para el servicio de Clientes
+builder.Services.AddHttpClient<IClienteService, ClienteService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // Configurar sesiones
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
