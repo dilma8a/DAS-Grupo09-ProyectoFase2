@@ -13,6 +13,8 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
 
+        public DbSet<Cliente> Clientes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,6 +39,17 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.Nombre).IsUnique();
+            });
+
+          
+            // Configuración de Cliente
+            modelBuilder.Entity<Cliente>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.DUI).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.FechaRegistro).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.EstaActivo).HasDefaultValue(true);
             });
         }
     }
