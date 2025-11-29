@@ -8,35 +8,23 @@ USE [EnvioPaquete]
 GO
 
 -- =====================================================
--- Hashes BCrypt Generados (Factor de trabajo: 11) - VÁLIDOS
+-- Hashes BCrypt VÁLIDOS Generados
 -- =====================================================
 -- Contraseña: admin123
--- Hash: $2a$11$5EqFGYvvJpW9Y0rVHNZMpuMvZJqkXn8LhKJYwP8zWy3hE6HbHU5bm
+-- Hash: $2a$11$wpsOcz7UznswVHTaJHlf.uJ5Heas4FXDP8VQQMb/mC9oO9VKe1ogy
 
 -- Contraseña: bodega123  
--- Hash: $2a$11$N8rP6tQ9sK5LmO7vU4yX0.eCfRhWjGtKdMp3YqLvHx2ZaBnI8rTOi
+-- Hash: $2a$11$ddik7/sa/hI36hBAAl.8ae4jcmeicXT874fEuAXUX91CTKi3pjscO
 
 -- Contraseña: repartidor123
--- Hash: $2a$11$T3uV8wZ2aB7cD4eF9gH1iJ.kL6mN0oP5qR7sT2uV6wX9yA3bC8dEf
+-- Hash: $2a$11$6Nxl2/Sm/LwyMm9CWw89tefNnNEgpdnEAM6UOV.9SBE7MnKtfx1g6
 
 -- Contraseña: cliente123
--- Hash: $2a$11$H9iJ3kL6mN7oP2qR5sT8uV.wX1yZ4aB7cD0eF3gH6iJ9kL2mN5oP8
+-- Hash: $2a$11$v5qLwri0Z4vZ35aBj1r9nOwzrpsomDJ5CIBo0XkZwRtZFJaM3bOaO
 
 -- =====================================================
--- PARA GENERAR HASHES REALES DE BCRYPT:
--- =====================================================
--- Ejecuta este código C# en una aplicación de consola:
---
--- using System;
--- 
--- string password = "admin123";
--- string hash = BCrypt.Net.BCrypt.HashPassword(password);
--- Console.WriteLine($"Password: {password}");
--- Console.WriteLine($"Hash: {hash}");
---
--- O usa la herramienta PasswordHashTool incluida en el proyecto:
--- cd PasswordHashTool
--- dotnet run
+-- NOTA: Estos hashes fueron generados usando el endpoint
+-- POST /api/seguridad/generar-hash de la API REST
 -- =====================================================
 
 PRINT 'Insertando usuarios de prueba...'
@@ -47,13 +35,13 @@ GO
 IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE Username = 'admin')
 BEGIN
     INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo)
-    VALUES ('Admin', 'Principal', 'admin', 'admin@sistema.com', '$2a$11$5EqFGYvvJpW9Y0rVHNZMpuMvZJqkXn8LhKJYwP8zWy3hE6HbHU5bm', 1, 1);
+    VALUES ('Admin', 'Principal', 'admin', 'admin@sistema.com', '$2a$11$wpsOcz7UznswVHTaJHlf.uJ5Heas4FXDP8VQQMb/mC9oO9VKe1ogy', 1, 1);
     PRINT 'Usuario Administrador creado: admin'
 END
 ELSE
 BEGIN
     UPDATE Usuarios 
-    SET Clave = '$2a$11$5EqFGYvvJpW9Y0rVHNZMpuMvZJqkXn8LhKJYwP8zWy3hE6HbHU5bm'
+    SET Clave = '$2a$11$wpsOcz7UznswVHTaJHlf.uJ5Heas4FXDP8VQQMb/mC9oO9VKe1ogy'
     WHERE Username = 'admin';
     PRINT 'Usuario Administrador actualizado: admin'
 END
@@ -64,13 +52,13 @@ GO
 IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE Username = 'bodega')
 BEGIN
     INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo)
-    VALUES ('Personal', 'Bodega', 'bodega', 'bodega@sistema.com', '$2a$11$N8rP6tQ9sK5LmO7vU4yX0.eCfRhWjGtKdMp3YqLvHx2ZaBnI8rTOi', 2, 1);
+    VALUES ('Personal', 'Bodega', 'bodega', 'bodega@sistema.com', '$2a$11$ddik7/sa/hI36hBAAl.8ae4jcmeicXT874fEuAXUX91CTKi3pjscO', 2, 1);
     PRINT 'Usuario Bodega creado: bodega'
 END
 ELSE
 BEGIN
     UPDATE Usuarios 
-    SET Clave = '$2a$11$N8rP6tQ9sK5LmO7vU4yX0.eCfRhWjGtKdMp3YqLvHx2ZaBnI8rTOi'
+    SET Clave = '$2a$11$ddik7/sa/hI36hBAAl.8ae4jcmeicXT874fEuAXUX91CTKi3pjscO'
     WHERE Username = 'bodega';
     PRINT 'Usuario Bodega actualizado: bodega'
 END
@@ -81,13 +69,13 @@ GO
 IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE Username = 'repartidor')
 BEGIN
     INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo)
-    VALUES ('Conductor', 'Repartidor', 'repartidor', 'repartidor@sistema.com', '$2a$11$T3uV8wZ2aB7cD4eF9gH1iJ.kL6mN0oP5qR7sT2uV6wX9yA3bC8dEf', 3, 1);
+    VALUES ('Conductor', 'Repartidor', 'repartidor', 'repartidor@sistema.com', '$2a$11$6Nxl2/Sm/LwyMm9CWw89tefNnNEgpdnEAM6UOV.9SBE7MnKtfx1g6', 3, 1);
     PRINT 'Usuario Repartidor creado: repartidor'
 END
 ELSE
 BEGIN
     UPDATE Usuarios 
-    SET Clave = '$2a$11$T3uV8wZ2aB7cD4eF9gH1iJ.kL6mN0oP5qR7sT2uV6wX9yA3bC8dEf'
+    SET Clave = '$2a$11$6Nxl2/Sm/LwyMm9CWw89tefNnNEgpdnEAM6UOV.9SBE7MnKtfx1g6'
     WHERE Username = 'repartidor';
     PRINT 'Usuario Repartidor actualizado: repartidor'
 END
@@ -98,13 +86,13 @@ GO
 IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE Username = 'cliente')
 BEGIN
     INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo)
-    VALUES ('Cliente', 'Prueba', 'cliente', 'cliente@sistema.com', '$2a$11$H9iJ3kL6mN7oP2qR5sT8uV.wX1yZ4aB7cD0eF3gH6iJ9kL2mN5oP8', 4, 1);
+    VALUES ('Cliente', 'Prueba', 'cliente', 'cliente@sistema.com', '$2a$11$v5qLwri0Z4vZ35aBj1r9nOwzrpsomDJ5CIBo0XkZwRtZFJaM3bOaO', 4, 1);
     PRINT 'Usuario Cliente creado: cliente'
 END
 ELSE
 BEGIN
     UPDATE Usuarios 
-    SET Clave = '$2a$11$H9iJ3kL6mN7oP2qR5sT8uV.wX1yZ4aB7cD0eF3gH6iJ9kL2mN5oP8'
+    SET Clave = '$2a$11$v5qLwri0Z4vZ35aBj1r9nOwzrpsomDJ5CIBo0XkZwRtZFJaM3bOaO'
     WHERE Username = 'cliente';
     PRINT 'Usuario Cliente actualizado: cliente'
 END
