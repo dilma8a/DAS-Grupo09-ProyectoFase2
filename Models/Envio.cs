@@ -28,13 +28,13 @@ namespace DAS_Grupo09_ProyectoFase2.Models
         public DateTime? FechaEntrega { get; set; }
 
         [Display(Name = "Estado del Envío")]
-        public string EstadoEnvio { get; set; }
+        public string? EstadoEnvio { get; set; }  // ⬅️ NULLABLE
 
         [Display(Name = "Observaciones")]
-        public string Observaciones { get; set; }
+        public string? Observaciones { get; set; }  // ⬅️ NULLABLE
 
-        // Propiedades de navegacion
-        public Paquete Paquete { get; set; }
-        public Empleado Conductor { get; set; }
+        // Propiedades de navegacion - NULLABLE
+        public Paquete? Paquete { get; set; }  // ⬅️ NULLABLE
+        public Empleado? Conductor { get; set; }  // ⬅️ NULLABLE
     }
 }

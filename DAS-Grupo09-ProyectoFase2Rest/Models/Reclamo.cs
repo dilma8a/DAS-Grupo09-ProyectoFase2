@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DAS_Grupo09_ProyectoFase2Rest.Models
 {
@@ -12,9 +12,9 @@ namespace DAS_Grupo09_ProyectoFase2Rest.Models
         public string Estado { get; set; }
         public DateTime FechaReclamo { get; set; }
         public DateTime? FechaResolucion { get; set; }
-        public string Respuesta { get; set; }
-        
-        public Cliente Cliente { get; set; }
-        public Envio Envio { get; set; }
+        public string? Respuesta { get; set; }  // ⬅️ NULLABLE
+
+        public Cliente? Cliente { get; set; }  // ⬅️ NULLABLE, SIN [Required]
+        public Envio? Envio { get; set; }  // ⬅️ NULLABLE, SIN [Required]
     }
 }

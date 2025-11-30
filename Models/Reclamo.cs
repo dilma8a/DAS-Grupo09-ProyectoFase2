@@ -26,7 +26,7 @@ namespace DAS_Grupo09_ProyectoFase2.Models
 
         [Display(Name = "Estado")]
         [StringLength(20)]
-        public string Estado { get; set; }
+        public string? Estado { get; set; }  // ⬅️ NULLABLE
 
         [Display(Name = "Fecha de Reclamo")]
         public DateTime FechaReclamo { get; set; }
@@ -36,10 +36,10 @@ namespace DAS_Grupo09_ProyectoFase2.Models
 
         [Display(Name = "Respuesta")]
         [StringLength(500)]
-        public string Respuesta { get; set; }
+        public string? Respuesta { get; set; }  // ⬅️ NULLABLE
 
-        // Relaciones
-        public Envio Envio { get; set; }
-        public Cliente Cliente { get; set; }
+        // Relaciones - NULLABLE
+        public Envio? Envio { get; set; }  // ⬅️ NULLABLE
+        public Cliente? Cliente { get; set; }  // ⬅️ NULLABLE
     }
 }

@@ -26,53 +26,11 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
         // GET: Paquetes
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("=== ENTRANDO A PAQUETES INDEX ===");
-
             if (UsuarioNoAutenticado())
-            {
-                _logger.LogWarning("Usuario no autenticado. Redirigiendo a Login.");
                 return RedirectToAction("Index", "Login");
-            }
 
-            var token = HttpContext.Session.GetString("Token");
-            _logger.LogInformation($"Token encontrado: {token?.Substring(0, 20)}...");
-
-            try
-            {
-                _logger.LogInformation("Llamando a _paqueteService.ObtenerTodosAsync()...");
-                var paquetes = await _paqueteService.ObtenerTodosAsync();
-
-                if (paquetes == null)
-                {
-                    _logger.LogError("❌ ObtenerTodosAsync() devolvió NULL");
-                    TempData["ErrorMessage"] = "Error: El servicio devolvió NULL";
-                    return View(new List<Paquete>());
-                }
-
-                _logger.LogInformation($"✅ Paquetes obtenidos: {paquetes.Count}");
-
-                if (paquetes.Count == 0)
-                {
-                    _logger.LogWarning("⚠️ La lista de paquetes está vacía");
-                    TempData["InfoMessage"] = "No hay paquetes registrados en el sistema";
-                }
-                else
-                {
-                    foreach (var p in paquetes)
-                    {
-                        _logger.LogInformation($"  - Paquete ID: {p.Id}, Código: {p.CodigoBarra}, Cliente: {p.IdCliente}");
-                    }
-                }
-
-                return View(paquetes);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"❌ EXCEPCIÓN en Index: {ex.Message}");
-                _logger.LogError($"StackTrace: {ex.StackTrace}");
-                TempData["ErrorMessage"] = $"Error al cargar paquetes: {ex.Message}";
-                return View(new List<Paquete>());
-            }
+            var paquetes = await _paqueteService.ObtenerTodosAsync();
+            return View(paquetes);
         }
 
         // GET: Paquetes/Details/5
@@ -98,10 +56,17 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
         // GET: Paquetes/Create
         public async Task<IActionResult> Create()
         {
+            _logger.LogInformation("=== GET Create - Cargando vista ===");
+
             if (UsuarioNoAutenticado())
+            {
+                _logger.LogWarning("Usuario no autenticado, redirigiendo a Login");
                 return RedirectToAction("Index", "Login");
+            }
 
             var clientes = await _clienteService.GetClientesAsync();
+            _logger.LogInformation($"Clientes obtenidos: {clientes?.Count ?? 0}");
+
             ViewBag.Clientes = new SelectList(clientes, "Id", "Nombre");
             return View();
         }
@@ -111,26 +76,76 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Paquete paquete)
         {
+            _logger.LogInformation("=== POST Create - Iniciando creación de paquete ===");
+            _logger.LogInformation($"CodigoBarra: {paquete.CodigoBarra}");
+            _logger.LogInformation($"Peso: {paquete.Peso}");
+            _logger.LogInformation($"IdCliente: {paquete.IdCliente}");
+
             if (UsuarioNoAutenticado())
+            {
+                _logger.LogWarning("Usuario no autenticado");
                 return RedirectToAction("Index", "Login");
+            }
+
+            // Verificar token
+            var token = HttpContext.Session.GetString("Token");
+            _logger.LogInformation($"Token presente: {!string.IsNullOrEmpty(token)}");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _logger.LogInformation($"Token (primeros 20 caracteres): {token.Substring(0, Math.Min(20, token.Length))}...");
+            }
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation("ModelState es válido, procediendo a crear...");
+
                 paquete.FechaRegistro = DateTime.Now;
                 paquete.EstadoActual = "Recibido";
 
-                var resultado = await _paqueteService.CrearAsync(paquete);
-                if (resultado)
+                _logger.LogInformation("Llamando a _paqueteService.CrearAsync...");
+
+                try
                 {
-                    TempData["SuccessMessage"] = "Paquete creado exitosamente";
-                    return RedirectToAction(nameof(Index));
+                    var resultado = await _paqueteService.CrearAsync(paquete);
+                    _logger.LogInformation($"Resultado de CrearAsync: {resultado}");
+
+                    if (resultado)
+                    {
+                        _logger.LogInformation("✅ Paquete creado exitosamente, redirigiendo a Index");
+                        TempData["SuccessMessage"] = "Paquete creado exitosamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        _logger.LogError("❌ CrearAsync retornó false");
+                        ModelState.AddModelError("", "Error al crear el paquete. Verifique los datos.");
+                        TempData["ErrorMessage"] = "Error al crear el paquete";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Error al crear el paquete");
+                    _logger.LogError(ex, "❌ EXCEPCIÓN al crear paquete");
+                    ModelState.AddModelError("", $"Error: {ex.Message}");
+                    TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("❌ ModelState NO es válido");
+                foreach (var key in ModelState.Keys)
+                {
+                    var errors = ModelState[key].Errors;
+                    if (errors.Any())
+                    {
+                        foreach (var error in errors)
+                        {
+                            _logger.LogWarning($"Error en {key}: {error.ErrorMessage}");
+                        }
+                    }
                 }
             }
 
+            _logger.LogInformation("Recargando vista con errores...");
             var clientes = await _clienteService.GetClientesAsync();
             ViewBag.Clientes = new SelectList(clientes, "Id", "Nombre", paquete.IdCliente);
             return View(paquete);
@@ -225,6 +240,7 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["ErrorMessage"] = "Error al eliminar el paquete";
             return RedirectToAction(nameof(Delete), new { id });
         }
     }

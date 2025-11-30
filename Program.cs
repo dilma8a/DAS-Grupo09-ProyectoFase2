@@ -14,50 +14,60 @@ builder.Services.AddControllersWithViews();
 // SESSION
 // =========================
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // tiempo de inactividad
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
 // =========================
+// HTTP CONTEXT ACCESSOR (MUY IMPORTANTE)
+// =========================
+builder.Services.AddHttpContextAccessor();
+
+// =========================
 // HTTP CLIENTS PARA LA API
 // =========================
-// CAMBIO IMPORTANTE: Quitamos /api/ del final
-var apiBaseUrl = "https://localhost:7218/";  // ⬅️ SIN /api/ al final
+var apiBaseUrl = "https://localhost:7218/";  // SIN /api/ al final
 
+// LoginService
 builder.Services.AddHttpClient<ILoginService, LoginService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// ClienteService
 builder.Services.AddHttpClient<IClienteService, ClienteService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// PaqueteService
 builder.Services.AddHttpClient<IPaqueteService, PaqueteService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// EnvioService
 builder.Services.AddHttpClient<IEnvioService, EnvioService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// ReclamoService
 builder.Services.AddHttpClient<IReclamoService, ReclamoService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// ReporteService
 builder.Services.AddHttpClient<IReporteService, ReporteService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
@@ -77,6 +87,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 // MUY IMPORTANTE: antes de Authorization

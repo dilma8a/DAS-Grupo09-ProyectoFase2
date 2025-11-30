@@ -16,13 +16,13 @@ namespace DAS_Grupo09_ProyectoFase2.Models
         public decimal Peso { get; set; }
 
         [Display(Name = "Dimensiones")]
-        public string Dimensiones { get; set; }
+        public string? Dimensiones { get; set; }  // ⬅️ NULLABLE
 
         [Display(Name = "Descripción")]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }  // ⬅️ NULLABLE
 
         [Display(Name = "Estado Actual")]
-        public string EstadoActual { get; set; }
+        public string? EstadoActual { get; set; }  // ⬅️ NULLABLE (se asigna en controller)
 
         [Display(Name = "Fecha de Registro")]
         public DateTime FechaRegistro { get; set; }
@@ -31,7 +31,7 @@ namespace DAS_Grupo09_ProyectoFase2.Models
         [Display(Name = "Cliente")]
         public int IdCliente { get; set; }
 
-        // Propiedad de navegacion
-        public Cliente Cliente { get; set; }
+        // Propiedad de navegación - NO REQUERIDA
+        public Cliente? Cliente { get; set; }  // ⬅️ NULLABLE
     }
 }

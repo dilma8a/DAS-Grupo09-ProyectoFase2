@@ -1,6 +1,4 @@
 using DAS_Grupo09_ProyectoFase2.Models;
-using System.Text.Json;
-using System.Text;
 
 namespace DAS_Grupo09_ProyectoFase2.Services
 {
@@ -18,13 +16,11 @@ namespace DAS_Grupo09_ProyectoFase2.Services
     public class ReclamoService : IReclamoService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<ReclamoService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ReclamoService(HttpClient httpClient, ILogger<ReclamoService> logger, IHttpContextAccessor httpContextAccessor)
+        public ReclamoService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
-            _logger = logger;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -43,24 +39,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync("api/Reclamos");
-
+                var response = await _httpClient.GetAsync("https://localhost:7218/api/Reclamos");
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var reclamos = JsonSerializer.Deserialize<List<Reclamo>>(content, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                    return reclamos ?? new List<Reclamo>();
+                    return await response.Content.ReadFromJsonAsync<List<Reclamo>>();
                 }
-
-                _logger.LogWarning($"Error al obtener reclamos. Status: {response.StatusCode}");
                 return new List<Reclamo>();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Error al obtener reclamos");
                 return new List<Reclamo>();
             }
         }
@@ -70,24 +57,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync($"api/Reclamos/{id}");
-
-                if (!response.IsSuccessStatusCode)
+                var response = await _httpClient.GetAsync($"https://localhost:7218/api/Reclamos/{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    return null;
+                    return await response.Content.ReadFromJsonAsync<Reclamo>();
                 }
-
-                var content = await response.Content.ReadAsStringAsync();
-                var reclamo = JsonSerializer.Deserialize<Reclamo>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return reclamo;
+                return null;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al obtener reclamo {id}");
                 return null;
             }
         }
@@ -97,15 +75,25 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var jsonContent = JsonSerializer.Serialize(reclamo);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync("api/Reclamos", content);
+                var reclamoDto = new
+                {
+                    id = reclamo.Id,
+                    idEnvio = reclamo.IdEnvio,
+                    idCliente = reclamo.IdCliente,
+                    tipoReclamo = reclamo.TipoReclamo,
+                    descripcion = reclamo.Descripcion,
+                    estado = reclamo.Estado ?? "Pendiente",
+                    fechaReclamo = reclamo.FechaReclamo,
+                    fechaResolucion = reclamo.FechaResolucion,
+                    respuesta = reclamo.Respuesta
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7218/api/Reclamos", reclamoDto);
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Error al crear reclamo");
                 return false;
             }
         }
@@ -115,15 +103,25 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var jsonContent = JsonSerializer.Serialize(reclamo);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"api/Reclamos/{reclamo.Id}", content);
+                var reclamoDto = new
+                {
+                    id = reclamo.Id,
+                    idEnvio = reclamo.IdEnvio,
+                    idCliente = reclamo.IdCliente,
+                    tipoReclamo = reclamo.TipoReclamo,
+                    descripcion = reclamo.Descripcion,
+                    estado = reclamo.Estado ?? "Pendiente",
+                    fechaReclamo = reclamo.FechaReclamo,
+                    fechaResolucion = reclamo.FechaResolucion,
+                    respuesta = reclamo.Respuesta
+                };
+
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7218/api/Reclamos/{reclamo.Id}", reclamoDto);
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al actualizar reclamo {reclamo.Id}");
                 return false;
             }
         }
@@ -133,12 +131,11 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.DeleteAsync($"api/Reclamos/{id}");
+                var response = await _httpClient.DeleteAsync($"https://localhost:7218/api/Reclamos/{id}");
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al eliminar reclamo {id}");
                 return false;
             }
         }
@@ -148,22 +145,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync($"api/Reclamos/cliente/{idCliente}");
-
+                var response = await _httpClient.GetAsync($"https://localhost:7218/api/Reclamos/cliente/{idCliente}");
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var reclamos = JsonSerializer.Deserialize<List<Reclamo>>(content, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                    return reclamos ?? new List<Reclamo>();
+                    return await response.Content.ReadFromJsonAsync<List<Reclamo>>();
                 }
                 return new List<Reclamo>();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al obtener reclamos por cliente {idCliente}");
                 return new List<Reclamo>();
             }
         }
@@ -173,22 +163,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync($"api/Reclamos/estado/{estado}");
-
+                var response = await _httpClient.GetAsync($"https://localhost:7218/api/Reclamos/estado/{estado}");
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var reclamos = JsonSerializer.Deserialize<List<Reclamo>>(content, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                    return reclamos ?? new List<Reclamo>();
+                    return await response.Content.ReadFromJsonAsync<List<Reclamo>>();
                 }
                 return new List<Reclamo>();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al obtener reclamos por estado {estado}");
                 return new List<Reclamo>();
             }
         }

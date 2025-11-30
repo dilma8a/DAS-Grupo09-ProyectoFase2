@@ -1,6 +1,4 @@
-using DAS_Grupo09_ProyectoFase2.Models;
-using System.Text.Json;
-using System.Text;
+ï»¿using DAS_Grupo09_ProyectoFase2.Models;
 
 namespace DAS_Grupo09_ProyectoFase2.Services
 {
@@ -16,13 +14,11 @@ namespace DAS_Grupo09_ProyectoFase2.Services
     public class EnvioService : IEnvioService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<EnvioService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EnvioService(HttpClient httpClient, ILogger<EnvioService> logger, IHttpContextAccessor httpContextAccessor)
+        public EnvioService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
-            _logger = logger;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -41,24 +37,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync("api/Envios");
-
+                var response = await _httpClient.GetAsync("https://localhost:7218/api/Envios");
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var envios = JsonSerializer.Deserialize<List<Envio>>(content, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                    return envios ?? new List<Envio>();
+                    return await response.Content.ReadFromJsonAsync<List<Envio>>();
                 }
-
-                _logger.LogWarning($"Error al obtener envíos. Status: {response.StatusCode}");
                 return new List<Envio>();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Error al obtener envíos");
                 return new List<Envio>();
             }
         }
@@ -68,24 +55,15 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync($"api/Envios/{id}");
-
-                if (!response.IsSuccessStatusCode)
+                var response = await _httpClient.GetAsync($"https://localhost:7218/api/Envios/{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    return null;
+                    return await response.Content.ReadFromJsonAsync<Envio>();
                 }
-
-                var content = await response.Content.ReadAsStringAsync();
-                var envio = JsonSerializer.Deserialize<Envio>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return envio;
+                return null;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al obtener envío {id}");
                 return null;
             }
         }
@@ -95,15 +73,25 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var jsonContent = JsonSerializer.Serialize(envio);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync("api/Envios", content);
+                var envioDto = new
+                {
+                    id = envio.Id,
+                    idPaquete = envio.IdPaquete,
+                    idConductor = envio.IdConductor,
+                    origen = envio.Origen,
+                    destino = envio.Destino,
+                    fechaSalida = envio.FechaSalida,
+                    fechaEntrega = envio.FechaEntrega,
+                    estadoEnvio = envio.EstadoEnvio ?? "Pendiente",
+                    observaciones = envio.Observaciones
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7218/api/Envios", envioDto);
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Error al crear envío");
                 return false;
             }
         }
@@ -113,15 +101,25 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var jsonContent = JsonSerializer.Serialize(envio);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"api/Envios/{envio.Id}", content);
+                var envioDto = new
+                {
+                    id = envio.Id,
+                    idPaquete = envio.IdPaquete,
+                    idConductor = envio.IdConductor,
+                    origen = envio.Origen,
+                    destino = envio.Destino,
+                    fechaSalida = envio.FechaSalida,
+                    fechaEntrega = envio.FechaEntrega,
+                    estadoEnvio = envio.EstadoEnvio ?? "Pendiente",
+                    observaciones = envio.Observaciones
+                };
+
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7218/api/Envios/{envio.Id}", envioDto);
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al actualizar envío {envio.Id}");
                 return false;
             }
         }
@@ -131,12 +129,11 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.DeleteAsync($"api/Envios/{id}");
+                var response = await _httpClient.DeleteAsync($"https://localhost:7218/api/Envios/{id}");
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, $"Error al eliminar envío {id}");
                 return false;
             }
         }
