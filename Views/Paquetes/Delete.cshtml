@@ -1,31 +1,60 @@
 @model DAS_Grupo09_ProyectoFase2.Models.Paquete
-
 @{
     ViewData["Title"] = "Eliminar Paquete";
 }
 
 <div class="container mt-4">
-    <h2>Eliminar Paquete</h2>
-    <h3 class="text-danger">¿Está seguro que desea eliminar este paquete?</h3>
-    <hr />
-    
-    <dl class="row">
-        <dt class="col-sm-3">Código de Barra</dt>
-        <dd class="col-sm-9">@Model.CodigoBarra</dd>
-        
-        <dt class="col-sm-3">Peso</dt>
-        <dd class="col-sm-9">@Model.Peso kg</dd>
-        
-        <dt class="col-sm-3">Descripción</dt>
-        <dd class="col-sm-9">@Model.Descripcion</dd>
-        
-        <dt class="col-sm-3">Estado</dt>
-        <dd class="col-sm-9">@Model.EstadoActual</dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Eliminar Paquete</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>¿Está seguro que desea eliminar este paquete?</strong>
+                        <p class="mb-0 mt-2">Esta acción no se puede deshacer.</p>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">ID:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.Id</strong></dd>
+
+                        <dt class="col-sm-4">Código de Barra:</dt>
+                        <dd class="col-sm-8"><code>@Model.CodigoBarra</code></dd>
+
+                        <dt class="col-sm-4">Cliente:</dt>
+                        <dd class="col-sm-8">@(Model.Cliente?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Peso:</dt>
+                        <dd class="col-sm-8">@Model.Peso kg</dd>
+
+                        <dt class="col-sm-4">Descripción:</dt>
+                        <dd class="col-sm-8">@Model.Descripcion</dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.EstadoActual</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Registro:</dt>
+                        <dd class="col-sm-8">@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Confirmar Eliminación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

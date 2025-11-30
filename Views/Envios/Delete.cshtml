@@ -1,31 +1,57 @@
 @model DAS_Grupo09_ProyectoFase2.Models.Envio
-
 @{
     ViewData["Title"] = "Eliminar Envío";
 }
 
 <div class="container mt-4">
-    <h2>Eliminar Envío</h2>
-    <h3 class="text-danger">¿Está seguro que desea eliminar este envío?</h3>
-    <hr />
-    
-    <dl class="row">
-        <dt class="col-sm-3">ID</dt>
-        <dd class="col-sm-9">@Model.Id</dd>
-        
-        <dt class="col-sm-3">Origen</dt>
-        <dd class="col-sm-9">@Model.Origen</dd>
-        
-        <dt class="col-sm-3">Destino</dt>
-        <dd class="col-sm-9">@Model.Destino</dd>
-        
-        <dt class="col-sm-3">Estado</dt>
-        <dd class="col-sm-9">@Model.EstadoEnvio</dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Eliminar Envío</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>¿Está seguro que desea eliminar este envío?</strong>
+                        <p class="mb-0 mt-2">Esta acción no se puede deshacer.</p>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">ID Envío:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.Id</strong></dd>
+
+                        <dt class="col-sm-4">Código de Paquete:</dt>
+                        <dd class="col-sm-8"><code>@(Model.Paquete?.CodigoBarra ?? "N/A")</code></dd>
+
+                        <dt class="col-sm-4">Origen:</dt>
+                        <dd class="col-sm-8">@Model.Origen</dd>
+
+                        <dt class="col-sm-4">Destino:</dt>
+                        <dd class="col-sm-8">@Model.Destino</dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.EstadoEnvio</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Salida:</dt>
+                        <dd class="col-sm-8">@(Model.FechaSalida?.ToString("dd/MM/yyyy") ?? "Sin asignar")</dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Confirmar Eliminación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -33,16 +33,35 @@ namespace DAS_Grupo09_ProyectoFase2.Services
             {
                 AddAuthorizationHeader();
 
+                _logger.LogInformation("=== LLAMANDO API ===");
+                _logger.LogInformation($"URL Base: {_httpClient.BaseAddress}");
+                _logger.LogInformation($"URL Completa: {_httpClient.BaseAddress}api/Clientes");
+
                 var response = await _httpClient.GetAsync("api/Clientes");
-                response.EnsureSuccessStatusCode();
+
+                _logger.LogInformation($"Status Code: {response.StatusCode}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Error HTTP: {response.StatusCode} - {errorContent}");
+                    return new List<Cliente>();
+                }
 
                 var content = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation($"Respuesta: {content}");
+
                 var clientes = JsonSerializer.Deserialize<List<Cliente>>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
                 return clientes ?? new List<Cliente>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Error de conexión HTTP al API");
+                return new List<Cliente>();
             }
             catch (Exception ex)
             {

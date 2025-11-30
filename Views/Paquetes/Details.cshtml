@@ -1,35 +1,72 @@
 @model DAS_Grupo09_ProyectoFase2.Models.Paquete
-
 @{
     ViewData["Title"] = "Detalles del Paquete";
 }
 
 <div class="container mt-4">
-    <h2>Detalles del Paquete</h2>
-    <hr />
-    
-    <dl class="row">
-        <dt class="col-sm-3">Código de Barra</dt>
-        <dd class="col-sm-9">@Model.CodigoBarra</dd>
-        
-        <dt class="col-sm-3">Peso</dt>
-        <dd class="col-sm-9">@Model.Peso kg</dd>
-        
-        <dt class="col-sm-3">Dimensiones</dt>
-        <dd class="col-sm-9">@Model.Dimensiones</dd>
-        
-        <dt class="col-sm-3">Descripción</dt>
-        <dd class="col-sm-9">@Model.Descripcion</dd>
-        
-        <dt class="col-sm-3">Estado Actual</dt>
-        <dd class="col-sm-9"><span class="badge bg-info">@Model.EstadoActual</span></dd>
-        
-        <dt class="col-sm-3">Fecha de Registro</dt>
-        <dd class="col-sm-9">@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</dd>
-    </dl>
-    
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-box"></i> Detalles del Paquete</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">ID:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.Id</strong></dd>
+
+                        <dt class="col-sm-4">Código de Barra:</dt>
+                        <dd class="col-sm-8"><code>@Model.CodigoBarra</code></dd>
+
+                        <dt class="col-sm-4">Cliente:</dt>
+                        <dd class="col-sm-8">@(Model.Cliente?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Peso:</dt>
+                        <dd class="col-sm-8">@Model.Peso kg</dd>
+
+                        <dt class="col-sm-4">Dimensiones:</dt>
+                        <dd class="col-sm-8">@Model.Dimensiones</dd>
+
+                        <dt class="col-sm-4">Descripción:</dt>
+                        <dd class="col-sm-8">@Model.Descripcion</dd>
+
+                        <dt class="col-sm-4">Estado Actual:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.EstadoActual == "Entregado")
+                            {
+                                <span class="badge bg-success"><i class="fas fa-check"></i> @Model.EstadoActual</span>
+                            }
+                            else if (Model.EstadoActual == "En tránsito")
+                            {
+                                <span class="badge bg-info"><i class="fas fa-truck"></i> @Model.EstadoActual</span>
+                            }
+                            else if (Model.EstadoActual == "En bodega")
+                            {
+                                <span class="badge bg-warning"><i class="fas fa-warehouse"></i> @Model.EstadoActual</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.EstadoActual</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Registro:</dt>
+                        <dd class="col-sm-8">@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a la lista
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

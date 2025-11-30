@@ -33,10 +33,10 @@ CREATE TABLE Usuarios (
     FOREIGN KEY (IdRol) REFERENCES Roles(Id)
 );
 
--- =====================================
--- EJEMPLO: INSERTAR USUARIO ADMINISTRADOR
--- =====================================
-INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol)
-VALUES ('Admin', 'Principal', 'admin', 'admin@sistema.com', 'HASH_AQUI', 1);
+INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo) VALUES ('Juan', 'Perez', 'admin', 'admin@gmail.com', '$2a$11$RFxdpApqSo/p.esMK2D5dOWVdw9xd1Adw6x8qdfHXitTBMstOpOhO', 1, 1);
+INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo) VALUES ('Manuel', 'Gonzalez', 'bodega', 'bodega@gmail.com', '$2a$11$z0JbCZ4Cd/l16U1qTV3ZuOtCF9TD/y/JTPlFvuznTY0qUYPQyqvJu', 2, 1);
+INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo) VALUES ('Maria', 'Fernandez', 'repartidor', 'repartidor@gmail.com', '$2a$11$ZIfM9exLuUe82.sCxgyLk.CT8dvG02T8/TJt0ufWbFGgdF8y9nPiS', 3, 1);
+INSERT INTO Usuarios (Nombre, Apellido, Username, Correo, Clave, IdRol, EstaActivo) VALUES ('Karla', 'Fuentes', 'cliente', 'cliente@gmail.com', '$2a$11$jkWbituuLpSZq7QDLIBGve97QEY2Jda2HLNx6NAAG5wse9e0wgI4W', 4, 1);
+
 
 

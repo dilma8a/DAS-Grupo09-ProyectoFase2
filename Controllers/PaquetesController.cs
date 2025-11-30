@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DAS_Grupo09_ProyectoFase2.Models;
 using DAS_Grupo09_ProyectoFase2.Services;
@@ -9,11 +9,13 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
     {
         private readonly IPaqueteService _paqueteService;
         private readonly IClienteService _clienteService;
+        private readonly ILogger<PaquetesController> _logger;
 
-        public PaquetesController(IPaqueteService paqueteService, IClienteService clienteService)
+        public PaquetesController(IPaqueteService paqueteService, IClienteService clienteService, ILogger<PaquetesController> logger)
         {
             _paqueteService = paqueteService;
             _clienteService = clienteService;
+            _logger = logger;
         }
 
         private bool UsuarioNoAutenticado()
@@ -24,11 +26,53 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
         // GET: Paquetes
         public async Task<IActionResult> Index()
         {
-            if (UsuarioNoAutenticado())
-                return RedirectToAction("Index", "Login");
+            _logger.LogInformation("=== ENTRANDO A PAQUETES INDEX ===");
 
-            var paquetes = await _paqueteService.ObtenerTodosAsync();
-            return View(paquetes);
+            if (UsuarioNoAutenticado())
+            {
+                _logger.LogWarning("Usuario no autenticado. Redirigiendo a Login.");
+                return RedirectToAction("Index", "Login");
+            }
+
+            var token = HttpContext.Session.GetString("Token");
+            _logger.LogInformation($"Token encontrado: {token?.Substring(0, 20)}...");
+
+            try
+            {
+                _logger.LogInformation("Llamando a _paqueteService.ObtenerTodosAsync()...");
+                var paquetes = await _paqueteService.ObtenerTodosAsync();
+
+                if (paquetes == null)
+                {
+                    _logger.LogError("❌ ObtenerTodosAsync() devolvió NULL");
+                    TempData["ErrorMessage"] = "Error: El servicio devolvió NULL";
+                    return View(new List<Paquete>());
+                }
+
+                _logger.LogInformation($"✅ Paquetes obtenidos: {paquetes.Count}");
+
+                if (paquetes.Count == 0)
+                {
+                    _logger.LogWarning("⚠️ La lista de paquetes está vacía");
+                    TempData["InfoMessage"] = "No hay paquetes registrados en el sistema";
+                }
+                else
+                {
+                    foreach (var p in paquetes)
+                    {
+                        _logger.LogInformation($"  - Paquete ID: {p.Id}, Código: {p.CodigoBarra}, Cliente: {p.IdCliente}");
+                    }
+                }
+
+                return View(paquetes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"❌ EXCEPCIÓN en Index: {ex.Message}");
+                _logger.LogError($"StackTrace: {ex.StackTrace}");
+                TempData["ErrorMessage"] = $"Error al cargar paquetes: {ex.Message}";
+                return View(new List<Paquete>());
+            }
         }
 
         // GET: Paquetes/Details/5
@@ -78,6 +122,7 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
                 var resultado = await _paqueteService.CrearAsync(paquete);
                 if (resultado)
                 {
+                    TempData["SuccessMessage"] = "Paquete creado exitosamente";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -131,6 +176,7 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
                 var resultado = await _paqueteService.ActualizarAsync(paquete);
                 if (resultado)
                 {
+                    TempData["SuccessMessage"] = "Paquete actualizado exitosamente";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -175,6 +221,7 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
             var resultado = await _paqueteService.EliminarAsync(id);
             if (resultado)
             {
+                TempData["SuccessMessage"] = "Paquete eliminado exitosamente";
                 return RedirectToAction(nameof(Index));
             }
 

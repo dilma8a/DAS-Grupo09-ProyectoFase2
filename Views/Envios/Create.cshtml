@@ -1,59 +1,81 @@
 @model DAS_Grupo09_ProyectoFase2.Models.Envio
-
 @{
     ViewData["Title"] = "Crear Envío";
 }
 
 <div class="container mt-4">
-    <h2>Crear Nuevo Envío</h2>
-    <hr />
-    
     <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                
-                <div class="form-group mb-3">
-                    <label asp-for="IdPaquete" class="control-label"></label>
-                    <select asp-for="IdPaquete" class="form-control" asp-items="ViewBag.Paquetes">
-                        <option value="">-- Seleccione un paquete --</option>
-                    </select>
-                    <span asp-validation-for="IdPaquete" class="text-danger"></span>
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-shipping-fast"></i> Crear Nuevo Envío</h4>
                 </div>
-                
-                <div class="form-group mb-3">
-                    <label asp-for="Origen" class="control-label"></label>
-                    <input asp-for="Origen" class="form-control" />
-                    <span asp-validation-for="Origen" class="text-danger"></span>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdPaquete" class="form-label"></label>
+                            <select asp-for="IdPaquete" class="form-select" asp-items="ViewBag.Paquetes">
+                                <option value="">-- Seleccione un paquete --</option>
+                            </select>
+                            <span asp-validation-for="IdPaquete" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Origen" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-map-marker-alt text-success"></i>
+                                    </span>
+                                    <input asp-for="Origen" class="form-control" placeholder="Ciudad/Dirección de origen" />
+                                </div>
+                                <span asp-validation-for="Origen" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Destino" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-map-marker-alt text-danger"></i>
+                                    </span>
+                                    <input asp-for="Destino" class="form-control" placeholder="Ciudad/Dirección de destino" />
+                                </div>
+                                <span asp-validation-for="Destino" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FechaSalida" class="form-label"></label>
+                            <input asp-for="FechaSalida" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="FechaSalida" class="text-danger"></span>
+                            <small class="text-muted">Opcional: Dejar vacío si aún no ha salido</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Observaciones" class="form-label"></label>
+                            <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Ingrese observaciones o notas especiales (opcional)"></textarea>
+                            <span asp-validation-for="Observaciones" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Crear Envío
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="form-group mb-3">
-                    <label asp-for="Destino" class="control-label"></label>
-                    <input asp-for="Destino" class="form-control" />
-                    <span asp-validation-for="Destino" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group mb-3">
-                    <label asp-for="FechaSalida" class="control-label"></label>
-                    <input asp-for="FechaSalida" class="form-control" type="date" />
-                    <span asp-validation-for="FechaSalida" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group mb-3">
-                    <label asp-for="Observaciones" class="control-label"></label>
-                    <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Observaciones" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group">
-                    <input type="submit" value="Crear" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Volver</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

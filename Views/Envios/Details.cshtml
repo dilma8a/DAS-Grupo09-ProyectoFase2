@@ -5,34 +5,106 @@
 }
 
 <div class="container mt-4">
-    <h2>Detalles del Envío</h2>
-    <hr />
-    
-    <dl class="row">
-        <dt class="col-sm-3">ID Envío</dt>
-        <dd class="col-sm-9">@Model.Id</dd>
-        
-        <dt class="col-sm-3">Origen</dt>
-        <dd class="col-sm-9">@Model.Origen</dd>
-        
-        <dt class="col-sm-3">Destino</dt>
-        <dd class="col-sm-9">@Model.Destino</dd>
-        
-        <dt class="col-sm-3">Estado</dt>
-        <dd class="col-sm-9"><span class="badge bg-info">@Model.EstadoEnvio</span></dd>
-        
-        <dt class="col-sm-3">Fecha de Salida</dt>
-        <dd class="col-sm-9">@(Model.FechaSalida?.ToString("dd/MM/yyyy HH:mm") ?? "Sin asignar")</dd>
-        
-        <dt class="col-sm-3">Fecha de Entrega</dt>
-        <dd class="col-sm-9">@(Model.FechaEntrega?.ToString("dd/MM/yyyy HH:mm") ?? "Sin entregar")</dd>
-        
-        <dt class="col-sm-3">Observaciones</dt>
-        <dd class="col-sm-9">@Model.Observaciones</dd>
-    </dl>
-    
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-shipping-fast"></i> Detalles del Envío #@Model.Id</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">ID Envío:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.Id</strong></dd>
+
+                        <dt class="col-sm-4">Código de Paquete:</dt>
+                        <dd class="col-sm-8"><code>@(Model.Paquete?.CodigoBarra ?? "N/A")</code></dd>
+
+                        <dt class="col-sm-4">Origen:</dt>
+                        <dd class="col-sm-8">
+                            <i class="fas fa-map-marker-alt text-success"></i> @Model.Origen
+                        </dd>
+
+                        <dt class="col-sm-4">Destino:</dt>
+                        <dd class="col-sm-8">
+                            <i class="fas fa-map-marker-alt text-danger"></i> @Model.Destino
+                        </dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.EstadoEnvio == "Entregado")
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check"></i> Entregado
+                                </span>
+                            }
+                            else if (Model.EstadoEnvio == "En tránsito")
+                            {
+                                <span class="badge bg-info">
+                                    <i class="fas fa-truck"></i> En tránsito
+                                </span>
+                            }
+                            else if (Model.EstadoEnvio == "Pendiente")
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock"></i> Pendiente
+                                </span>
+                            }
+                            else if (Model.EstadoEnvio == "Retrasado")
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> Retrasado
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.EstadoEnvio</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Salida:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.FechaSalida != null)
+                            {
+                                <span><i class="fas fa-calendar"></i> @Model.FechaSalida?.ToString("dd/MM/yyyy HH:mm")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin asignar</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Fecha de Entrega:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.FechaEntrega != null)
+                            {
+                                <span><i class="fas fa-calendar-check"></i> @Model.FechaEntrega?.ToString("dd/MM/yyyy HH:mm")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Pendiente</span>
+                            }
+                        </dd>
+
+                        @if (!string.IsNullOrEmpty(Model.Observaciones))
+                        {
+                            <dt class="col-sm-4">Observaciones:</dt>
+                            <dd class="col-sm-8">@Model.Observaciones</dd>
+                        }
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a la lista
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

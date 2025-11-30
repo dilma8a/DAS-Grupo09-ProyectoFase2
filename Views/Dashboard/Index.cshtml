@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Dashboard - Sistema de Envíos";
-    Layout = "_Layout";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -13,12 +13,68 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #1976d2;
+            --accent-color: #42a5f5;
             --success-color: #2e7d32;
             --warning-color: #f57c00;
             --danger-color: #c62828;
             --info-color: #0277bd;
         }
 
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar Styles */
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+            .navbar-brand i {
+                color: #ffd700;
+                margin-right: 10px;
+            }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            margin: 0 10px;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+            .navbar-nav .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white !important;
+            }
+
+            .navbar-nav .nav-link i {
+                margin-right: 5px;
+            }
+
+        .user-info {
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+            .user-info i {
+                margin-right: 8px;
+                color: #ffd700;
+            }
 
         /* Main Content */
         .main-content {
@@ -39,6 +95,7 @@
                 color: #666;
                 font-size: 16px;
             }
+
         /* Card Stats */
         .stat-card {
             background: white;
@@ -51,128 +108,130 @@
             position: relative;
             overflow: hidden;
         }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--card-color), var(--card-color-light));
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-card.blue { --card-color: #0d47a1; --card-color-light: #42a5f5; }
-        .stat-card.green { --card-color: #2e7d32; --card-color-light: #66bb6a; }
-        .stat-card.orange { --card-color: #f57c00; --card-color-light: #ffb74d; }
-        .stat-card.red { --card-color: #c62828; --card-color-light: #ef5350; }
-        .stat-card.purple { --card-color: #6a1b9a; --card-color-light: #ab47bc; }
-        .stat-card.teal { --card-color: #00695c; --card-color-light: #26a69a; }
-        
-        .stat-card .icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: white;
-            background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .stat-card .content {
-            flex: 1;
-            padding-left: 20px;
-        }
-        
-        .stat-card .number {
-            font-size: 36px;
-            font-weight: bold;
-            color: var(--card-color);
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        
-        .stat-card .label {
-            color: #666;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .stat-card .trend {
-            font-size: 12px;
-            margin-top: 8px;
-        }
-        
-        .stat-card .trend.up {
-            color: var(--success-color);
-        }
-        
-        .stat-card .trend.down {
-            color: var(--danger-color);
-        }
-        
-        /* Menu Cards */
-        .menu-card {
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 5px;
+                background: linear-gradient(90deg, var(--card-color), var(--card-color-light));
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+            .stat-card.blue {
+                --card-color: #0d47a1;
+                --card-color-light: #42a5f5;
+            }
+
+            .stat-card.green {
+                --card-color: #2e7d32;
+                --card-color-light: #66bb6a;
+            }
+
+            .stat-card.orange {
+                --card-color: #f57c00;
+                --card-color-light: #ffb74d;
+            }
+
+            .stat-card.red {
+                --card-color: #c62828;
+                --card-color-light: #ef5350;
+            }
+
+            .stat-card.purple {
+                --card-color: #6a1b9a;
+                --card-color-light: #ab47bc;
+            }
+
+            .stat-card.teal {
+                --card-color: #00695c;
+                --card-color-light: #26a69a;
+            }
+
+            .stat-card .icon {
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                color: white;
+                background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .stat-card .content {
+                flex: 1;
+                padding-left: 20px;
+            }
+
+            .stat-card .number {
+                font-size: 36px;
+                font-weight: bold;
+                color: var(--card-color);
+                line-height: 1;
+                margin-bottom: 5px;
+            }
+
+            .stat-card .label {
+                color: #666;
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+        /* Menu Navigation */
+        .menu-navigation {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            border: none;
-            height: 100%;
-            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            margin-bottom: 30px;
         }
-        
-        .menu-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .menu-card .icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            color: white;
-            background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
-        }
-        
-        .menu-card h5 {
-            color: #333;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .menu-card p {
-            color: #666;
-            font-size: 14px;
-            margin: 0;
-        }
-        
-        .section-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--accent-color);
-        }
-        
+
+            .menu-navigation .nav {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .menu-navigation .nav-item {
+                flex: 1;
+                min-width: 150px;
+                max-width: 200px;
+            }
+
+            .menu-navigation .nav-link {
+                color: #666;
+                padding: 18px 20px;
+                text-align: center;
+                transition: all 0.3s;
+                border-bottom: 3px solid transparent;
+                font-weight: 500;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+
+                .menu-navigation .nav-link i {
+                    font-size: 24px;
+                    margin-bottom: 5px;
+                }
+
+                .menu-navigation .nav-link:hover {
+                    background-color: #f5f7fa;
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                }
+
         .logout-btn {
             background: linear-gradient(135deg, #c62828, #ef5350);
             color: white;
@@ -181,21 +240,167 @@
             border-radius: 8px;
             transition: all 0.3s;
         }
-        
-        .logout-btn:hover {
-            background: linear-gradient(135deg, #b71c1c, #c62828);
-            transform: translateY(-2px);
-        }
-        
-       
+
+            .logout-btn:hover {
+                background: linear-gradient(135deg, #b71c1c, #c62828);
+                transform: translateY(-2px);
+            }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index">
+                <i class="fas fa-truck-fast"></i>
+                EnvíoExpress SV
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <span>@ViewBag.NombreCompleto (@ViewBag.Rol)</span>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Login" asp-action="Logout" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Menu Navigation -->
-    
-    
+    <div class="menu-navigation">
+        <div class="container-fluid">
+            <ul class="nav">
+                @* Rol Administrador: Todas las opciones *@
+                @if (ViewBag.Rol == "Administrador")
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Clientes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Paquetes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-box"></i>
+                            <span>Paquetes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Envios" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Envíos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Reclamos" asp-action="Index" class="nav-link">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Reclamos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Reportes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reportes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Tracking" asp-action="Index" class="nav-link">
+                            <i class="fas fa-search-location"></i>
+                            <span>Rastreo</span>
+                        </a>
+                    </li>
+                }
+
+                @* Rol Personal de Bodega: Reportes, Paquetes, Reclamos *@
+                @if (ViewBag.Rol == "Personal de Bodega")
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Reportes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reportes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Paquetes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-box"></i>
+                            <span>Paquetes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Reclamos" asp-action="Index" class="nav-link">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Reclamos</span>
+                        </a>
+                    </li>
+                }
+
+                @* Rol Repartidor: Reportes, Envíos, Reclamos, Rastreo *@
+                @if (ViewBag.Rol == "Repartidor")
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Reportes" asp-action="Index" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reportes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Envios" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Envíos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Reclamos" asp-action="Index" class="nav-link">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Reclamos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Tracking" asp-action="Index" class="nav-link">
+                            <i class="fas fa-search-location"></i>
+                            <span>Rastreo</span>
+                        </a>
+                    </li>
+                }
+
+                @* Rol Cliente: Reclamos, Rastreo *@
+                @if (ViewBag.Rol == "Cliente")
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Reclamos" asp-action="Index" class="nav-link">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Reclamos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Tracking" asp-action="Index" class="nav-link">
+                            <i class="fas fa-search-location"></i>
+                            <span>Rastreo</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="container-fluid main-content">
         <div class="container">
@@ -204,84 +409,88 @@
                 <h1><i class="fas fa-chart-line"></i> Panel de Control</h1>
                 <p>Bienvenido al sistema de gestión de envíos y logística</p>
             </div>
-            
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-4 col-sm-6">
-                    <div class="stat-card blue">
-                        <div class="d-flex align-items-center">
-                            <div class="icon">
-                                <i class="fas fa-box"></i>
+
+            @* Statistics Cards - No mostrar para rol Cliente *@
+            @if (ViewBag.Rol != "Cliente")
+            {
+                <!-- Statistics Cards (demo) -->
+                <div class="row mb-4">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="stat-card blue">
+                            <div class="d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="number">1,247</div>
+                                    <div class="label">Total de Envíos</div>
+                                </div>
                             </div>
-                            <div class="content">
-                                <div class="number">1,247</div>
-                                <div class="label">Total de Envíos</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="stat-card green">
+                            <div class="d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="number">89</div>
+                                    <div class="label">Paquetes en Tránsito</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="stat-card orange">
+                            <div class="d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="number">23</div>
+                                    <div class="label">Entregas Pendientes</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-4 col-sm-6">
-                    <div class="stat-card green">
-                        <div class="d-flex align-items-center">
-                            <div class="icon">
-                                <i class="fas fa-truck"></i>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="stat-card red">
+                            <div class="d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="number">7</div>
+                                    <div class="label">Reclamos Activos</div>
+                                </div>
                             </div>
-                            <div class="content">
-                                <div class="number">89</div>
-                                <div class="label">Paquetes en Tránsito</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="stat-card purple">
+                            <div class="d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="content">
+                                    <div class="number">342</div>
+                                    <div class="label">Total de Clientes</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-4 col-sm-6">
-                    <div class="stat-card orange">
-                        <div class="d-flex align-items-center">
-                            <div class="icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="content">
-                                <div class="number">23</div>
-                                <div class="label">Entregas Pendientes</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-4 col-sm-6">
-                    <div class="stat-card red">
-                        <div class="d-flex align-items-center">
-                            <div class="icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="content">
-                                <div class="number">7</div>
-                                <div class="label">Reclamos Activos</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 col-sm-6">
-                    <div class="stat-card purple">
-                        <div class="d-flex align-items-center">
-                            <div class="icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="content">
-                                <div class="number">342</div>
-                                <div class="label">Total de Clientes</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>

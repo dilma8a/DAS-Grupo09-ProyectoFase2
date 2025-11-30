@@ -7,23 +7,50 @@ namespace DAS_Grupo09_ProyectoFase2.Controllers
     public class ClientesController : Controller
     {
         private readonly IClienteService _clienteService;
+        private readonly ILogger<ClientesController> _logger;
 
-        public ClientesController(IClienteService clienteService)
+        public ClientesController(IClienteService clienteService, ILogger<ClientesController> logger)
         {
             _clienteService = clienteService;
+            _logger = logger;
         }
 
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
             // Verificar autenticación
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            var token = HttpContext.Session.GetString("Token");
+            _logger.LogInformation("=== DEBUG CLIENTES ===");
+            _logger.LogInformation($"Token en sesión: {(string.IsNullOrEmpty(token) ? "NO EXISTE" : "SÍ EXISTE")}");
+
+            if (string.IsNullOrEmpty(token))
             {
+                _logger.LogWarning("No hay token, redirigiendo a Login");
                 return RedirectToAction("Index", "Login");
             }
 
-            var clientes = await _clienteService.GetClientesAsync();
-            return View(clientes);
+            try
+            {
+                _logger.LogInformation("Llamando a GetClientesAsync...");
+                var clientes = await _clienteService.GetClientesAsync();
+
+                _logger.LogInformation($"Clientes obtenidos: {clientes?.Count ?? 0}");
+
+                if (clientes == null || !clientes.Any())
+                {
+                    _logger.LogWarning("No se obtuvieron clientes del servicio");
+                    TempData["ErrorMessage"] = "No se pudieron cargar los clientes. Verifica que el API esté ejecutándose.";
+                    return View(new List<Cliente>());
+                }
+
+                return View(clientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener clientes");
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                return View(new List<Cliente>());
+            }
         }
 
         // GET: Clientes/Details/5
